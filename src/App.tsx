@@ -692,6 +692,13 @@ export default function App() {
                 </button>
               )}
             </div>
+
+            {/* Signature */}
+            <div className="absolute bottom-8 left-0 right-0 text-center">
+              <p className="text-white/40 text-xs font-medium tracking-widest uppercase">
+                By: Leonardo Assunção
+              </p>
+            </div>
           </motion.div>
         )}
 
