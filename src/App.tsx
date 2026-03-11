@@ -416,7 +416,7 @@ export default function App() {
 
           // Collision Detection
           const birdX = canvas.width / 3;
-          const birdR = BIRD_SIZE / 2 - 4;
+          const birdR = BIRD_SIZE / 2 - 8; // More forgiving hitbox
 
           if (!isInvincible && birdX + birdR > obs.x && birdX - birdR < obs.x + OBSTACLE_WIDTH) {
             if (birdY.current - birdR < obs.gapTop || birdY.current + birdR > obs.gapTop + OBSTACLE_GAP) {
@@ -426,8 +426,8 @@ export default function App() {
             }
           }
 
-          // Score
-          if (!obs.passed && obs.x + OBSTACLE_WIDTH < birdX) {
+          // Score - Trigger only when the WHOLE bird has passed the pipe
+          if (!obs.passed && obs.x + OBSTACLE_WIDTH < birdX - birdR) {
             obs.passed = true;
             setScore(s => {
               const newScore = s + 1;
@@ -450,6 +450,8 @@ export default function App() {
                 transitionProgress.current = 0;
                 setCurrentBiomeIndex(nextIndex);
                 setShowBiomeNotice(true);
+                sounds.playTransition();
+                sounds.playDialogue();
                 setTimeout(() => setShowBiomeNotice(false), 2000);
               }
               
@@ -464,7 +466,7 @@ export default function App() {
           addObstacle(lastObsX + OBSTACLE_SPACING);
         }
 
-        if (birdY.current + BIRD_SIZE / 2 > canvas.height || birdY.current - BIRD_SIZE / 2 < 0) {
+        if (birdY.current + BIRD_SIZE / 2 > canvas.height + 20 || birdY.current - BIRD_SIZE / 2 < -20) {
           setGameState('GAME_OVER');
           sounds.playHit();
           addParticles(canvas.width / 3, birdY.current, targetBiome.particleColor);
@@ -719,7 +721,7 @@ export default function App() {
               
               <div className="flex flex-col items-center gap-6">
                 <button 
-                  onClick={(e) => { e.stopPropagation(); setGameState('PLAYING'); initGame(); }}
+                  onClick={(e) => { e.stopPropagation(); sounds.playClick(); setGameState('PLAYING'); initGame(); }}
                   className="bg-green-500 hover:bg-green-400 text-white px-10 py-4 rounded-xl font-pixel text-lg border-4 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center gap-3"
                 >
                   <Play fill="currentColor" size={20} /> START
@@ -732,7 +734,7 @@ export default function App() {
 
                 {showInstallBtn && (
                   <button 
-                    onClick={handleInstallClick}
+                    onClick={(e) => { sounds.playClick(); handleInstallClick(e); }}
                     className="flex items-center gap-2 bg-blue-500 hover:bg-blue-400 text-white px-6 py-2 rounded-xl text-xs font-pixel border-4 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
                   >
                     <Download size={14} /> INSTALL
@@ -839,13 +841,13 @@ export default function App() {
 
               <div className="flex flex-col gap-4 w-64">
                 <button 
-                  onClick={(e) => { e.stopPropagation(); setGameState('PLAYING'); initGame(); }}
+                  onClick={(e) => { e.stopPropagation(); sounds.playClick(); setGameState('PLAYING'); initGame(); }}
                   className="bg-green-500 hover:bg-green-400 text-white w-full py-4 rounded-xl font-pixel text-sm border-4 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center justify-center gap-2"
                 >
                   <RotateCcw size={20} /> RETRY
                 </button>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); setGameState('START'); }}
+                  onClick={(e) => { e.stopPropagation(); sounds.playClick(); setGameState('START'); }}
                   className="bg-blue-500 hover:bg-blue-400 text-white w-full py-4 rounded-xl font-pixel text-sm border-4 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center justify-center gap-2"
                 >
                   <Home size={20} /> MENU
