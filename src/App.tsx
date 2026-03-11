@@ -5,7 +5,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Trophy, Play, RotateCcw, Home, Sparkles } from 'lucide-react';
+import { Trophy, Play, RotateCcw, Home, Sparkles, Download } from 'lucide-react';
 import { sounds } from './sounds';
 
 // --- Constants ---
@@ -122,6 +122,8 @@ export default function App() {
   const [currentBiomeIndex, setCurrentBiomeIndex] = useState(0);
   const [showBiomeNotice, setShowBiomeNotice] = useState(false);
   const [isInvincible, setIsInvincible] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
 
   // Game Refs
   const birdY = useRef(0);
@@ -142,6 +144,39 @@ export default function App() {
   const transitionProgress = useRef(1); // 0 to 1
   const targetBiomeIndex = useRef(0);
   const prevBiomeIndex = useRef(0);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBtn(true);
+    };
+
+    const handleAppInstalled = () => {
+      setShowInstallBtn(false);
+      setDeferredPrompt(null);
+      console.log('PWA was installed');
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setShowInstallBtn(false);
+    }
+    setDeferredPrompt(null);
+  };
 
   const initGame = () => {
     const canvas = canvasRef.current;
@@ -647,6 +682,15 @@ export default function App() {
                 <Trophy size={20} className="text-yellow-400" />
                 RECORDE: {highScore}
               </div>
+
+              {showInstallBtn && (
+                <button 
+                  onClick={handleInstallClick}
+                  className="mt-4 flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-full text-sm font-bold backdrop-blur-sm border border-white/20 transition-all"
+                >
+                  <Download size={16} /> INSTALAR APP
+                </button>
+              )}
             </div>
           </motion.div>
         )}

@@ -1,0 +1,47 @@
+{
+  "name": "PARDAL WINS",
+  "short_name": "Pardal Wins",
+  "description": "Jogo casual mobile de toque com um pardal atravessando obstáculos",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#bae6fd",
+  "theme_color": "#d97706",
+  "icons": [
+    {
+      "src": "https://api.dicebear.com/7.x/bottts/png?seed=bird&backgroundColor=d97706&size=192",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://api.dicebear.com/7.x/bottts/png?seed=bird&backgroundColor=d97706&size=512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://api.dicebear.com/7.x/bottts/png?seed=bird&backgroundColor=d97706&size=512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://picsum.photos/seed/pardal1/1080/1920",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Gameplay do Pardal Wins"
+    },
+    {
+      "src": "https://picsum.photos/seed/pardal2/1920/1080",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Pardal Wins em tela cheia"
+    }
+  ]
+}
